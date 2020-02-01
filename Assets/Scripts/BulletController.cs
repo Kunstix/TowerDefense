@@ -24,27 +24,52 @@ public class BulletController : MonoBehaviour
         float flyingTime = Time.time - startTime;
 
         gameObject.transform.position = Vector3.Lerp(startPosition, targetPosition, flyingTime * speed / distance);
+        RotateBullet();
 
         if (gameObject.transform.position.Equals(targetPosition))
         {
-            if(target != null)
-            {
-                Transform healthBarTransform = target.transform.Find("HealthBar");
-                HealthbarController healthbar = healthBarTransform.gameObject.GetComponent<HealthbarController>();
-
-                Debug.Log("Reduce health!");
-                healthbar.currentHealth -= Mathf.Max(damage, 0);
-              
-                if(healthbar.currentHealth <= 0)
-                {
-                    Destroy(target);
-                    // Audio abspielen
-                    Debug.Log("Increase coins by 50");
-                    GameManager.GM.SetCoins(GameManager.GM.GetCoins() + 50);
-                }
-            }
-
+            hitEnemy();
             Destroy(gameObject);
         }
+    }
+
+    private void RotateBullet()
+    {
+        if (target != null)
+        {
+            Vector3 offset = target.transform.position - transform.position;
+
+            transform.rotation = Quaternion.LookRotation(
+                                   Vector3.forward,
+                                   offset          
+                                 );
+        }
+    }
+    
+
+    private void hitEnemy()
+    {
+        if (target != null)
+        {
+            Transform healthBarTransform = target.transform.Find("HealthBar");
+            HealthbarController healthbar = healthBarTransform.gameObject.GetComponent<HealthbarController>();
+
+            Debug.Log("Reduce health!");
+            healthbar.currentHealth -= Mathf.Max(damage, 0);
+
+            if (healthbar.currentHealth <= 0)
+            {
+                EnemyDies();
+            }
+        }
+    }
+
+    private void EnemyDies()
+    {
+        Destroy(target);
+        AudioManager.AM.enemyDies.Play();
+        Debug.Log("Increase coins by 50");
+        GameManager.GM.SetCoins(GameManager.GM.GetCoins() + 50);
+        GameManager.GM.SetScore(GameManager.GM.GetScore() + 10);
     }
 }

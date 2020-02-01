@@ -49,23 +49,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   upgrades:
-  - cost: 0
+  - cost: 100
     display: {fileID: 857932159067257723}
     bullet: {fileID: 6186094902635333069, guid: ef40a29cde3715f4cacac9c6d9e96dfa,
       type: 3}
     fireRate: 1
-  - cost: 0
+  - cost: 150
     display: {fileID: 977423296053231603}
     bullet: {fileID: 1663039604650320693, guid: 72826779f3d3c82419227f34a14e3d21,
       type: 3}
     fireRate: 1
-  - cost: 0
+  - cost: 150
     display: {fileID: 7326061203859745630}
     bullet: {fileID: 3209842857494886481, guid: 44293b90bbb0f2d4ab2cddd44593de3d,
       type: 3}
-    fireRate: 0
+    fireRate: 1
   currentUpgrade:
-    cost: 1
+    cost: 0
     display: {fileID: 0}
     bullet: {fileID: 0}
     fireRate: 0

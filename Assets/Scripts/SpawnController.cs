@@ -33,7 +33,7 @@ public class SpawnController : MonoBehaviour
         {
             Debug.Log("Game ends.");
             Time.timeScale = 0;
-            GameManager.GM.gameOver = true;
+            GameManager.GM.GameOver();
             winMessagePanel.SetActive(true);
         }
     }

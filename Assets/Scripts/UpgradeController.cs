@@ -9,6 +9,7 @@ public class UpgradeController : MonoBehaviour
 
     private void OnEnable()
     {
+        Debug.Log("Set current upgrade: " + upgrades[0].cost);
         currentUpgrade = upgrades[0];
         DisplayShooterUpgrade(currentUpgrade);
     }

@@ -9,27 +9,51 @@ public class ShooterPlacementController : MonoBehaviour
 
     private void OnMouseUp()
     {
-        if (placeShooter())
+        if (canPlaceShooter())
         {
-            int cost = shooterPrefab.GetComponent<UpgradeController>().upgrades[0].cost;
-            if (GameManager.GM.GetCoins() >= cost)
-            {
-                shooter = Instantiate(shooterPrefab, transform.position, Quaternion.identity);
-                GameManager.GM.SetCoins(GameManager.GM.GetCoins() - shooterPrefab.GetComponent<UpgradeController>().currentUpgrade.cost);
-            }
+            PlaceShooterForCoins();
         }
-        else if (upgradeShooter())
+        else if (canUpgradeShooter())
         {
-            shooter.GetComponent<UpgradeController>().Upgrade();
+            UpgradeShooterForCoins();
         }
     }
 
-    private bool placeShooter()
+    private bool canPlaceShooter()
     {
         return shooter == null;
     }
 
-    private bool upgradeShooter()
+    private void PlaceShooterForCoins()
+    {
+        int cost = shooterPrefab.GetComponent<UpgradeController>().upgrades[0].cost;
+        if (GameManager.GM.GetCoins() >= cost)
+        {
+            Debug.Log("Place shooter.");
+            shooter = Instantiate(shooterPrefab, transform.position, Quaternion.identity);
+            ReduceCoins();
+        }
+    }
+
+    private void ReduceCoins()
+    {
+        Debug.Log("Reduce coins: " + shooterPrefab.GetComponent<UpgradeController>().currentUpgrade.cost);
+        GameManager.GM.SetCoins(GameManager.GM.GetCoins() - shooter.GetComponent<UpgradeController>().currentUpgrade.cost);
+
+    }
+
+    private void UpgradeShooterForCoins()
+    {
+        int cost = shooter.GetComponent<UpgradeController>().GetNextUpgrade().cost;
+        if (GameManager.GM.GetCoins() >= cost)
+        {
+            Debug.Log("Upgrade shooter.");
+            shooter.GetComponent<UpgradeController>().Upgrade();
+            ReduceCoins();
+        }
+    }
+
+    private bool canUpgradeShooter()
     {
         if (shooter != null)
         {

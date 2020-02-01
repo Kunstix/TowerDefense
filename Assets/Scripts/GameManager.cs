@@ -2,34 +2,60 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager GM;
 
+    [Header("Game Managing")]
+    public bool gameOver = false;
+    public GameObject gameOverPanel;
+    public GameObject playButtonPanel;
+    public GameObject pausePanel;
+    public GameObject resumePanel;
+
+    public int gamePlayHighscore;
+    public int gameOverScore;
+    public int highScore;
+    public int score;
+
+    public Text gamePlayHighScoreField;
+    public Text gameOverScoreField;
+    public Text gameOverHighScoreField;
+    public Text resumeScoreField;
+    public Text resumeHighScoreField;
+    public Text winScoreField;
+    public Text winHighScoreField;
+
+
+
+    [Header("Coins")]
     public Text coinsLabel;
     public int coins;
+
+    [Header("Waves")]
     public Text waveLabel;
     private int wave;
 
-    public bool gameOver = false;
-    public GameObject gameOverPanel;
-
+    [Header("Lives")]
     public GameObject[] liveItems;
     public Text livesLabel;
     private int lives;
 
     private void Awake()
     {
+        Time.timeScale = 0.0F;
+
         if(GM == null)
         {
             GM = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
+            DontDestroyOnLoad(gameObject);
         }
     }
 
@@ -37,6 +63,11 @@ public class GameManager : MonoBehaviour
     {
         SetWave(0);
         SetLives(liveItems.Length);
+        highScore = PlayerPrefs.GetInt("HIGHSCORE", 0);
+        gamePlayHighScoreField.text = highScore.ToString();
+        gameOverHighScoreField.text = highScore.ToString();
+        resumeHighScoreField.text = highScore.ToString();
+        winHighScoreField.text = highScore.ToString();
     }
 
     private void Update()
@@ -54,6 +85,16 @@ public class GameManager : MonoBehaviour
     public void SetCoins(int coinsValue)
     {
         coins = coinsValue;
+    }
+
+    public int GetScore()
+    {
+        return score;
+    }
+
+    public void SetScore(int scoreValue)
+    {
+        score = scoreValue;
     }
 
     public int GetWave()
@@ -76,12 +117,13 @@ public class GameManager : MonoBehaviour
         lives = currentLives;
         if (lives <= 0 && !gameOver)
         {
-            gameOver = true;
-            Time.timeScale = 0;
             gameOverPanel.SetActive(true);
+            GameOver();
+            Debug.Log("Play gameover");
+            AudioManager.AM.gameOver.Play();
         }
 
-        for(int i = 0; i < liveItems.Length; i++)
+        for (int i = 0; i < liveItems.Length; i++)
         {
             if(i < lives)
             {
@@ -108,6 +150,54 @@ public class GameManager : MonoBehaviour
     private void DisplayLives()
     {
         livesLabel.text = "Lives: " + lives;
+    }
+
+    public void OnPlayButton()
+    {
+        playButtonPanel.SetActive(false);
+        Time.timeScale = 1.0f;
+    }
+
+    public void OnResumeButton()
+    {
+        resumePanel.SetActive(false);
+        pausePanel.SetActive(true);
+        Time.timeScale = 1.0f;
+    }
+
+    public void OnPauseButton()
+    {
+        Time.timeScale = 0.0f;
+        resumePanel.SetActive(true);
+        pausePanel.SetActive(false);
+        resumeScoreField.text = score.ToString();
+        resumeHighScoreField.text = highScore.ToString();
+    }
+
+    public void OnRestartButton()
+    {
+        Time.timeScale = 1.0f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+     }
+
+    public void GameOver()
+    {
+        gameOver = true;
+        Time.timeScale = 0;
+        pausePanel.SetActive(false);
+
+        highScore = PlayerPrefs.GetInt("HIGHSCORE", 0);
+        if (score > highScore)
+        {
+            highScore = score;
+            PlayerPrefs.SetInt("HIGHSCORE", highScore);
+        }
+
+        gameOverScoreField.text = score.ToString();
+        gameOverHighScoreField.text = highScore.ToString();
+        gamePlayHighScoreField.text = highScore.ToString();
+        winScoreField.text = score.ToString();
+        winHighScoreField.text = highScore.ToString();
     }
 
 }

@@ -24,21 +24,38 @@ public class EnemyController : MonoBehaviour
 
         gameObject.transform.position = Vector2.Lerp(startPosition, endPosition, currentDistance / totalDistance);
 
+        RedirectEnemyOrEnd(endPosition);
+    }
+
+    private void RedirectEnemyOrEnd(Vector3 endPosition)
+    {
         if (gameObject.transform.position.Equals(endPosition))
         {
-            if(currentPathPoint < pathPoints.Length - 2)
+            if (currentPathPoint < pathPoints.Length - 2)
             {
-                currentPathPoint++;
-                RotateEnemy();
-                startTime = Time.time;
-            } else
-            {
-                CameraShakeController.instance.ShakeCamera();
-                Destroy(gameObject);
-                GameManager.GM.SetLives(GameManager.GM.GetLives() - 1);
+                UpdateEnemy();
             }
-            
+            else
+            {
+                DestroyEnemy();
+            }
+
         }
+    }
+
+    private void UpdateEnemy()
+    {
+        currentPathPoint++;
+        RotateEnemy();
+        startTime = Time.time;
+    }
+
+    private void DestroyEnemy()
+    {
+        CameraShakeController.instance.ShakeCamera();
+        Destroy(gameObject);
+        GameManager.GM.SetLives(GameManager.GM.GetLives() - 1);
+        AudioManager.AM.enemyHit.Play();
     }
 
     public float GetDistanceToTreasure()

@@ -60,8 +60,6 @@ public class FireController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Collision!");
-
         if (other.gameObject.tag.Equals("Enemy"))
         {
             enemiesInRange.Add(other.gameObject);
@@ -91,5 +89,7 @@ public class FireController : MonoBehaviour
         bulletController.target = target.gameObject;
         bulletController.startPosition = startPosition;
         bulletController.targetPosition = targetPosition;
+
+        AudioManager.AM.shoot.Play();
     }
 }
